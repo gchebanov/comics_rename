@@ -24,15 +24,6 @@ def process_comic(path: Path, lf: list[Path]):
     if c.keys() & {'.png', '.jpg', '.jpeg'}:
         print(f'WARNING {path=} {c!r}')
         return
-    ok, skip = 0, 0
-    for e in lf:
-        if ns := REPLACE.get(e.suffix):
-            ne = e.with_suffix(ns)
-            e.rename(ne)
-            ok += 1
-        else:
-            skip += 1
-    print(f'Done {path=} {ok=} {skip=}')
 
 
 def main(path: Path) -> None:
@@ -43,6 +34,16 @@ def main(path: Path) -> None:
     lf, ld = [], []
     for e in path.iterdir():
         (ld if e.is_dir() else lf).append(e)
+    if lf:
+        ok, skip = 0, 0
+        for e in lf:
+            if ns := REPLACE.get(e.suffix):
+                ne = e.with_suffix(ns)
+                e.rename(ne)
+                ok += 1
+            else:
+                skip += 1
+        print(f'Done {path=} {ok=} {skip=}')
     if not ld:
         process_comic(path, lf)
     for d in ld:
